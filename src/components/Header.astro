@@ -5,7 +5,9 @@ import { SITE_TITLE } from '../consts';
 
 <header>
 	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
+		<a href="/" class="logo-link">
+			<img src="/staycurio-logo.png" alt={SITE_TITLE} class="logo" />
+		</a>
 		<div class="internal-links">
 			<HeaderLink href="/">Home</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
@@ -49,14 +51,14 @@ import { SITE_TITLE } from '../consts';
 		background: white;
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
 	}
-	h2 {
-		margin: 0;
-		font-size: 1em;
+	.logo-link {
+		display: flex;
+		align-items: center;
+		padding: 0.5em 0;
 	}
-
-	h2 a,
-	h2 a.active {
-		text-decoration: none;
+	.logo {
+		height: 40px;
+		width: auto;
 	}
 	nav {
 		display: flex;
