@@ -1,0 +1,54 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`RLF App | ${SITE_TITLE}`} description="Stay Curious For Real Connections - An AI-powered app for meaningful human connections" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Stay Curious For Real Connections</h1>
+			<p>
+				RLF is an AI-powered application that helps people build genuine, meaningful relationships 
+				through curiosity-driven conversations.
+			</p>
+
+			<h2>The Problem</h2>
+			<p>
+				In our hyper-connected world, true connection is becoming rare. Social media encourages 
+				surface-level interactions, and meaningful conversations are being replaced by quick reactions 
+				and fleeting exchanges.
+			</p>
+
+			<h2>Our Solution</h2>
+			<p>
+				RLF uses AI to facilitate deeper conversations by encouraging curiosity. Instead of 
+				defaulting to small talk, the app guides users toward questions and topics that reveal 
+				who people really are—their passions, experiences, and perspectives.
+			</p>
+
+			<h2>Key Features</h2>
+			<ul>
+				<li><strong>Curiosity Prompts</strong> – AI-generated conversation starters that go beyond the surface</li>
+				<li><strong>Connection Insights</strong> – Understand your conversation patterns and how to deepen relationships</li>
+				<li><strong>Real Conversations</strong> – Tools designed for in-person meetups, not endless messaging</li>
+			</ul>
+
+			<h2>Status</h2>
+			<p>
+				RLF is currently in development. Stay tuned for updates.
+			</p>
+
+			<p>
+				<a href="/">← Back to Home</a>
+			</p>
+		</main>
+		<Footer />
+	</body>
+</html>
