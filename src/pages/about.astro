@@ -1,18 +1,47 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
 ---
 
-<Layout
-	title="About"
-	description="About StayCurio Inc."
-	pubDate={new Date('February 02 2026')}
-	heroImage="/christian-profile.jpg"
->
-	<p>
-		<strong>StayCurio Inc.</strong>
-	</p>
-
-	<p>
-		Christian has been building software since 2001, moving through the full stack from web and frontend work to large scale backend and distributed systems. His recent exploration of the DGX Spark is part of a broader effort to understand how modern AI and open source infrastructure fit together in practice.
-	</p>
-</Layout>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`About | ${SITE_TITLE}`} description="About StayCurio Inc." />
+		<style>
+			main {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 2em 1em;
+			}
+			.profile-image {
+				display: block;
+				margin: 0 auto 2em auto;
+				border-radius: 12px;
+				box-shadow: var(--box-shadow);
+				max-width: 30%;
+				height: auto;
+			}
+			h1 {
+				text-align: center;
+				margin-bottom: 1em;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<img src="/christian-profile.jpg" alt="Christian" class="profile-image" />
+			<h1>About</h1>
+			<p>
+				<strong>StayCurio Inc.</strong>
+			</p>
+			<p>
+				Christian has been building software since 2001, moving through the full stack from web and frontend work to large scale backend and distributed systems. His recent exploration of the DGX Spark is part of a broader effort to understand how modern AI and open source infrastructure fit together in practice.
+			</p>
+		</main>
+		<Footer />
+	</body>
+</html>
