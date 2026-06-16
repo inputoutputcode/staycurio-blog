@@ -13,9 +13,9 @@ The goal is simple. Show how a small but serious machine can turn local inferenc
 
 ## Watch the Session
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/placeholder-video-id" title="AI Prototyping with DGX Spark" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/9uWRz06bku0" title="AI Prototyping with DGX Spark" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-[Watch on YouTube →](https://www.youtube.com/watch?v=placeholder-video-id)
+[Watch on YouTube →](https://www.youtube.com/watch?v=9uWRz06bku0)
 
 ## Key Topics
 
