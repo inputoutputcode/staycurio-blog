@@ -1,0 +1,233 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import { SITE_TITLE } from '../../../consts';
+import { galleryItems } from '../../../data/realLifeFriendsGallery';
+
+export function getStaticPaths() {
+	return galleryItems.map((item, index) => {
+		const previousItem = galleryItems[(index - 1 + galleryItems.length) % galleryItems.length];
+		const nextItem = galleryItems[(index + 1) % galleryItems.length];
+
+		return {
+			params: { id: item.id },
+			props: {
+				item,
+				index,
+				previousItem,
+				nextItem,
+				total: galleryItems.length,
+			},
+		};
+	});
+}
+
+const { item, index, previousItem, nextItem, total } = Astro.props;
+const previousHref = `/real-life-friends/gallery/${previousItem.id}`;
+const nextHref = `/real-life-friends/gallery/${nextItem.id}`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${item.caption} | Real Life Friends | ${SITE_TITLE}`} description={`Real Life Friends screenshot: ${item.caption}`} />
+		<style>
+			:root {
+				color-scheme: light;
+			}
+
+			html,
+			body {
+				height: 100%;
+				margin: 0;
+			}
+
+			body {
+				overflow: hidden;
+				background: #f7f7f5;
+				color: rgb(var(--gray-dark));
+			}
+
+			.viewer-shell {
+				display: grid;
+				grid-template-rows: auto minmax(0, 1fr);
+				height: 100dvh;
+			}
+
+			.viewer-toolbar {
+				display: grid;
+				grid-template-columns: auto minmax(0, 1fr) auto;
+				align-items: center;
+				gap: 1rem;
+				padding: 0.75rem 1rem;
+				border-bottom: 1px solid rgb(var(--gray-light));
+				background: rgba(255, 255, 255, 0.94);
+			}
+
+			.back-link,
+			.nav-button {
+				display: inline-grid;
+				place-items: center;
+				min-width: 2.75rem;
+				height: 2.75rem;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				background: white;
+				color: rgb(var(--gray-dark));
+				text-decoration: none;
+				box-shadow: var(--box-shadow);
+			}
+
+			.back-link {
+				padding: 0 0.85rem;
+				font-size: 0.95rem;
+			}
+
+			.viewer-title {
+				min-width: 0;
+				text-align: center;
+			}
+
+			.viewer-title h1 {
+				margin: 0;
+				overflow: hidden;
+				font-size: 1rem;
+				line-height: 1.25;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.viewer-title p {
+				margin: 0.2rem 0 0;
+				font-size: 0.85rem;
+				color: rgb(var(--gray));
+			}
+
+			.nav-actions {
+				display: flex;
+				gap: 0.5rem;
+			}
+
+			.nav-button svg {
+				width: 1.25rem;
+				height: 1.25rem;
+			}
+
+			.back-link:hover,
+			.nav-button:hover,
+			.back-link:focus-visible,
+			.nav-button:focus-visible {
+				border-color: rgb(var(--accent));
+				color: rgb(var(--accent));
+			}
+
+			.viewer-stage {
+				position: relative;
+				display: grid;
+				min-height: 0;
+				padding: 1rem;
+			}
+
+			.viewer-figure {
+				display: grid;
+				grid-template-rows: minmax(0, 1fr) auto;
+				min-height: 0;
+				margin: 0;
+				gap: 0.75rem;
+			}
+
+			.viewer-image-wrap {
+				display: grid;
+				place-items: center;
+				min-height: 0;
+			}
+
+			.viewer-image {
+				display: block;
+				max-width: 100%;
+				max-height: 100%;
+				width: auto;
+				height: auto;
+				object-fit: contain;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				background: white;
+				box-shadow: var(--box-shadow);
+			}
+
+			.viewer-caption {
+				text-align: center;
+				font-size: 0.95rem;
+				color: rgb(var(--gray));
+			}
+
+			@media (max-width: 640px) {
+				.viewer-toolbar {
+					grid-template-columns: auto 1fr;
+					gap: 0.75rem;
+				}
+
+				.viewer-title {
+					text-align: left;
+				}
+
+				.nav-actions {
+					grid-column: 1 / -1;
+					justify-content: center;
+				}
+
+				.nav-button {
+					width: min(42vw, 10rem);
+				}
+
+				.viewer-stage {
+					padding: 0.75rem;
+				}
+			}
+		</style>
+	</head>
+	<body data-previous-href={previousHref} data-next-href={nextHref}>
+		<main class="viewer-shell">
+			<nav class="viewer-toolbar" aria-label="Gallery navigation">
+				<a class="back-link" href="/real-life-friends#product-gallery-heading">Gallery</a>
+				<div class="viewer-title">
+					<h1>{item.caption}</h1>
+					<p>{item.groupTitle} · {index + 1} of {total}</p>
+				</div>
+				<div class="nav-actions">
+					<a class="nav-button" href={previousHref} aria-label="Previous screenshot">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+						</svg>
+					</a>
+					<a class="nav-button" href={nextHref} aria-label="Next screenshot">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M9 18l6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+						</svg>
+					</a>
+				</div>
+			</nav>
+			<section class="viewer-stage" aria-label="Screenshot viewer">
+				<figure class="viewer-figure">
+					<div class="viewer-image-wrap">
+						<img class="viewer-image" src={item.src} alt={`Real Life Friends screenshot: ${item.caption}`} />
+					</div>
+					<figcaption class="viewer-caption">{item.caption}</figcaption>
+				</figure>
+			</section>
+		</main>
+		<script>
+			const previousHref = document.body.dataset.previousHref;
+			const nextHref = document.body.dataset.nextHref;
+
+			document.addEventListener('keydown', (event) => {
+				if (event.key === 'ArrowLeft' && previousHref) {
+					window.location.href = previousHref;
+				}
+
+				if (event.key === 'ArrowRight' && nextHref) {
+					window.location.href = nextHref;
+				}
+			});
+		</script>
+	</body>
+</html>

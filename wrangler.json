@@ -1,5 +1,5 @@
 {
-	"name": "astro-blog-starter-template",
+	"name": "staycurio",
 	"compatibility_date": "2025-10-08",
 	"compatibility_flags": ["nodejs_compat"],
 	"main": "./dist/_worker.js/index.js",
@@ -10,5 +10,11 @@
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": true
+	"upload_source_maps": true,
+	"routes": [
+		{
+			"pattern": "staycurio.io",
+			"custom_domain": true
+		}
+	]
 }

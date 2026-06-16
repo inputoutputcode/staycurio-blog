@@ -3,12 +3,94 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
+import { galleryGroups, galleryItems } from '../data/realLifeFriendsGallery';
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={`Real Life Friends | ${SITE_TITLE}`} description="Making real friends as an adult shouldn't be this hard. We match you with people who actually get your situation." />
+		<style>
+			.product-gallery {
+				margin-top: 4rem;
+				padding-top: 2rem;
+				border-top: 1px solid rgb(var(--gray-light));
+			}
+
+			.gallery-intro {
+				max-width: 48rem;
+			}
+
+			.gallery-group {
+				margin-top: 2.5rem;
+			}
+
+			.gallery-group header {
+				margin-bottom: 1rem;
+			}
+
+			.gallery-group h3 {
+				margin-bottom: 0.25rem;
+			}
+
+			.gallery-group p {
+				margin: 0;
+				color: rgb(var(--gray));
+			}
+
+			.gallery-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+				gap: 1rem;
+				margin-top: 1rem;
+			}
+
+			.gallery-card {
+				margin: 0;
+				overflow: hidden;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				background: white;
+				box-shadow: var(--box-shadow);
+			}
+
+			.gallery-card a {
+				display: block;
+				color: inherit;
+				text-decoration: none;
+			}
+
+			.gallery-card img {
+				display: block;
+				width: 100%;
+				aspect-ratio: 16 / 10;
+				object-fit: cover;
+				object-position: top left;
+				background: rgb(var(--gray-light));
+			}
+
+			.gallery-card figcaption {
+				padding: 0.65rem 0.75rem;
+				font-size: 0.9rem;
+				line-height: 1.3;
+				color: rgb(var(--gray-dark));
+			}
+
+			@media (max-width: 640px) {
+				.gallery-grid {
+					display: flex;
+					overflow-x: auto;
+					gap: 0.875rem;
+					padding-bottom: 0.5rem;
+					scroll-snap-type: x mandatory;
+				}
+
+				.gallery-card {
+					flex: 0 0 min(82vw, 320px);
+					scroll-snap-align: start;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
@@ -47,6 +129,37 @@ import { SITE_TITLE } from '../consts';
 				We're starting small with a pilot in Bend, Oregon. If you're interested in being part of the 
 				first cohort, reach out.
 			</p>
+
+			<section class="product-gallery" aria-labelledby="product-gallery-heading">
+				<div class="gallery-intro">
+					<h2 id="product-gallery-heading">Product Gallery</h2>
+					<p>
+						A grouped view of the Real Life Friends product surface, from the member journey to the admin and evaluation tools behind each introduction.
+					</p>
+				</div>
+
+				{galleryGroups.map((group) => (
+					<section class="gallery-group" aria-labelledby={`${group.title.toLowerCase().replaceAll(' ', '-')}-heading`}>
+						<header>
+							<h3 id={`${group.title.toLowerCase().replaceAll(' ', '-')}-heading`}>{group.title}</h3>
+							<p>{group.description}</p>
+						</header>
+						<div class="gallery-grid">
+							{group.images.map(([src, caption]) => {
+								const item = galleryItems.find((galleryItem) => galleryItem.src === src);
+								return (
+								<figure class="gallery-card">
+									<a href={`/real-life-friends/gallery/${item?.id ?? ''}`}>
+										<img src={src} alt={`Real Life Friends screenshot: ${caption}`} loading="lazy" decoding="async" />
+										<figcaption>{caption}</figcaption>
+									</a>
+								</figure>
+								);
+							})}
+						</div>
+					</section>
+				))}
+			</section>
 
 			<p>
 				<a href="/">← Back to Home</a>
