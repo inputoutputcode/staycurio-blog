@@ -1,5 +1,5 @@
 ---
-title: "AI Prototyping on DGX Spark at Deschutes Tech Guild"
+title: "\"AI Prototyping on DGX Spark\" at Deschutes Tech Guild"
 description: "A Deschutes Tech Guild talk about what happens when you bring NVIDIA DGX Spark to local AI prototyping, from CUDA-backed inference to latency, throughput, batching, and practical developer workflows."
 pubDate: "Jan 11 2026"
 heroImage: "/blog/deschutes-tech-guild-dgx-spark-talk.jpeg"
