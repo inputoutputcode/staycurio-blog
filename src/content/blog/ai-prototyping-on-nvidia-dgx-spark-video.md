@@ -1,7 +1,7 @@
 ---
 title: "AI Prototyping on NVIDIA DGX Spark"
 description: "A video walkthrough of local AI prototyping on NVIDIA DGX Spark, covering why desktop-class AI hardware matters for developer workflows and how it changes the path from experiment to working system."
-pubDate: "Jul 26 2026"
+pubDate: "Jul 18 2026"
 heroImage: "/blog/ai-prototyping-nvidia-dgx-spark-video.jpg"
 ---
 
@@ -20,4 +20,3 @@ The session focuses on the practical side of building with local compute: where 
 - **Local AI prototyping:** Using nearby GPU capacity to shorten the loop between idea, test, and iteration
 - **Developer workflow:** How a dedicated AI workstation changes experimentation compared with laptop-only or cloud-only setups
 - **Practical systems thinking:** Looking beyond a single model run toward repeatable, observable AI development workflows
-

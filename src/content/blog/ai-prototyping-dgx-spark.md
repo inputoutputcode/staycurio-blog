@@ -1,7 +1,7 @@
 ---
 title: "AI Prototyping with DGX Spark"
 description: "Developers keep running into the same wall when they try to run modern AI models locally. Laptops throttle, cloud costs sting, and the tooling feels scattered. This session explores what happens when you drop a DGX Spark onto your desk and pair it with the full NVIDIA ecosystem."
-pubDate: "Feb 02 2026"
+pubDate: "Oct 17 2025"
 heroImage: "/dgx-spark-unboxing.jpg"
 ---
 
