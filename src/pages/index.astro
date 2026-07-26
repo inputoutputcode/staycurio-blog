@@ -19,23 +19,31 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				natural language processing, and end-to-end AI system design.
 			</p>
 			
-			<h2>Our Approach</h2>
-			<p>
-				We believe in practical AI—solutions that work in production, not just in demos. 
-				Every project starts with understanding your actual needs and ends with measurable results.
-			</p>
-
-			<h2>Current Project</h2>
-			<h3>Real Life Friends</h3>
+			<br />
+			<h2 class="projects-heading">Current Projects</h2>
+			<br />
+			<h3 class="project-title">RLF social experiment</h3>
 			<p>
 				An AI-powered application designed to foster genuine human connections in a digital world. 
 				Real Life Friends helps people move beyond superficial interactions and build meaningful relationships 
 				through curiosity-driven conversations.
 			</p>
-			<p>
+			<p class="project-link">
 				<a href="/real-life-friends">Learn more about Real Life Friends →</a>
 			</p>
 
+			<br />
+			<h3 class="project-title">AI infrastructure lab</h3>
+			<p>
+				A hands-on exploration of local AI systems engineering: NVIDIA DGX Spark, local LLM inference, 
+				benchmarking, RAG experiments, ETL, fine tuning, and the production infrastructure patterns behind 
+				reliable AI applications.
+			</p>
+			<p>
+				<a href="/ai-engineering">Read the AI infrastructure lab notes →</a>
+			</p>
+
+			<br />
 			<h2>Let's Talk</h2>
 			<p>
 				Have a project in mind? We'd love to hear about it. Reach out via 
@@ -46,3 +54,15 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		<Footer />
 	</body>
 </html>
+
+<style>
+	.projects-heading {
+		margin-bottom: 1.25rem;
+	}
+	.project-title {
+		font-size: 1.65em;
+	}
+	.project-link {
+		margin-bottom: 2rem;
+	}
+</style>
