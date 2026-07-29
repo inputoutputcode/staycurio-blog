@@ -1,0 +1,9 @@
+services:
+  blog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: staycurio-blog
+    ports:
+      - "4312:4312"
+    restart: unless-stopped

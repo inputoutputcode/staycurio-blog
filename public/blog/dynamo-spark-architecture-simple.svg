@@ -1,0 +1,56 @@
+<svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#888"/>
+    </marker>
+  </defs>
+  <rect width="900" height="450" fill="#ffffff"/>
+  <g transform="translate(0 15)">
+  <text x="450" y="36" text-anchor="middle" font-size="19" font-weight="bold" fill="#1a1a1a">NVIDIA Dynamo on 2× DGX Spark</text>
+
+  <!-- Internet -->
+  <rect x="330" y="58" width="240" height="38" rx="19" fill="#f4f4f4" stroke="#aaa"/>
+  <text x="450" y="82" text-anchor="middle" font-size="12" fill="#555">Internet — egress only</text>
+
+  <!-- Spark A -->
+  <rect x="60" y="130" width="340" height="200" rx="12" fill="#eef4fb" stroke="#3b6ea5" stroke-width="2"/>
+  <text x="230" y="158" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f4c7a">DGX Spark A</text>
+  <text x="230" y="176" text-anchor="middle" font-size="11" fill="#5a7ca0">K3s server · Dynamo platform</text>
+
+  <rect x="85" y="192" width="290" height="34" rx="6" fill="#ffffff" stroke="#3b6ea5"/>
+  <text x="230" y="214" text-anchor="middle" font-size="12" fill="#333">Frontend + KV-aware Router</text>
+
+  <rect x="85" y="238" width="290" height="34" rx="6" fill="#ffffff" stroke="#3b6ea5"/>
+  <text x="230" y="260" text-anchor="middle" font-size="12" fill="#333">Operator · etcd · NATS · Grove · KAI</text>
+
+  <rect x="85" y="284" width="290" height="34" rx="6" fill="#dff0d8" stroke="#4a8a3c"/>
+  <text x="230" y="306" text-anchor="middle" font-size="12" font-weight="bold" fill="#2c5e22">vLLM Prefill Worker · GB10</text>
+
+  <!-- Spark B -->
+  <rect x="500" y="130" width="340" height="200" rx="12" fill="#eef4fb" stroke="#3b6ea5" stroke-width="2"/>
+  <text x="670" y="158" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f4c7a">DGX Spark B</text>
+  <text x="670" y="176" text-anchor="middle" font-size="11" fill="#5a7ca0">K3s agent</text>
+
+  <rect x="525" y="192" width="290" height="34" rx="6" fill="#ffffff" stroke="#3b6ea5"/>
+  <text x="670" y="214" text-anchor="middle" font-size="12" fill="#333">kubelet · GPU Operator daemonsets</text>
+
+  <rect x="525" y="284" width="290" height="34" rx="6" fill="#dff0d8" stroke="#4a8a3c"/>
+  <text x="670" y="306" text-anchor="middle" font-size="12" font-weight="bold" fill="#2c5e22">vLLM Decode Worker · GB10</text>
+
+  <!-- CX-7 link -->
+  <line x1="400" y1="360" x2="500" y2="360" stroke="#c0392b" stroke-width="6"/>
+  <rect x="60" y="346" width="340" height="28" rx="6" fill="#fbeaea" stroke="#c0392b"/>
+  <text x="230" y="365" text-anchor="middle" font-size="12" font-weight="bold" fill="#8e2b20">ConnectX-7 · 192.168.177.11</text>
+  <rect x="500" y="346" width="340" height="28" rx="6" fill="#fbeaea" stroke="#c0392b"/>
+  <text x="670" y="365" text-anchor="middle" font-size="12" font-weight="bold" fill="#8e2b20">ConnectX-7 · 192.168.177.12</text>
+  <text x="450" y="398" text-anchor="middle" font-size="12" fill="#8e2b20" font-weight="bold">200 GbE: cluster traffic + KV-cache transfer (NIXL)</text>
+
+  <!-- KV transfer arrow -->
+  <line x1="375" y1="301" x2="525" y2="301" stroke="#4a8a3c" stroke-width="2" marker-end="url(#arr)" stroke-dasharray="6,4"/>
+  <text x="450" y="292" text-anchor="middle" font-size="11" fill="#4a8a3c">KV cache</text>
+
+  <!-- egress arrows -->
+  <line x1="230" y1="130" x2="380" y2="96" stroke="#999" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4,4"/>
+  <line x1="670" y1="130" x2="520" y2="96" stroke="#999" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4,4"/>
+  </g>
+</svg>

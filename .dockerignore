@@ -1,0 +1,9 @@
+.git
+.astro
+.wrangler
+dist
+node_modules
+*.zip
+npm-debug.log*
+.DS_Store
+original-screenshots

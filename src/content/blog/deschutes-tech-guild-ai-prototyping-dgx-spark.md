@@ -13,10 +13,6 @@ We will look at why the hardware architecture matters, how CUDA changes the shap
 
 The goal is simple: show how local inference can become a practical development superpower instead of a compromise.
 
-![AI Prototyping on DGX Spark at Deschutes Tech Guild](/blog/deschutes-tech-guild-dgx-spark-talk.jpeg)
-
-Christian presenting AI Prototyping on DGX Spark at Deschutes Tech Guild.
-
 ## Event
 
 [Deschutes Tech Guild - January Meetup](https://www.meetup.com/deschutes-tech-guild/events/311979210/)
@@ -30,10 +26,6 @@ Christian presenting AI Prototyping on DGX Spark at Deschutes Tech Guild.
 ![First slide from AI Prototyping on DGX Spark](/blog/ai-prototyping-on-dgx-spark-slide-preview.jpg)
 
 [Download the slide deck](/downloads/ai-prototyping-on-dgx-spark.pdf)
-
-![Christian holding the NVIDIA DGX Spark with a Deschutes Tech Guild organizer](/blog/deschutes-tech-guild-dgx-spark-speakers.jpeg)
-
-After the talk with the DGX Spark hardware.
 
 ## Key Topics
 

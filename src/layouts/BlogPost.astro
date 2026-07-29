@@ -8,6 +8,8 @@ import FormattedDate from '../components/FormattedDate.astro';
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const isDiagramHero =
+	heroImage?.endsWith('.svg') || heroImage?.includes('dynamo-spark-architecture');
 ---
 
 <html lang="en">
@@ -27,8 +29,15 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				margin: 0 auto;
 				border-radius: 12px;
 				box-shadow: var(--box-shadow);
-				max-width: 30%;
+				width: 720px;
+				max-width: calc(100% - 2em);
 				height: auto;
+			}
+			.hero-image img.diagram-hero {
+				box-sizing: border-box;
+				padding: 0.25rem;
+				background: #f7f8fa;
+				object-fit: contain;
 			}
 			.prose {
 				width: 720px;
@@ -45,6 +54,16 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			.title h1 {
 				margin: 0 0 0.5em 0;
+				font-size: 2.35em;
+			}
+			:global(.prose h1) {
+				font-size: 2em;
+			}
+			:global(.prose h2) {
+				font-size: 1.65em;
+			}
+			:global(.prose h3) {
+				font-size: 1.28em;
 			}
 			.date {
 				margin-bottom: 0.5em;
@@ -61,7 +80,17 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<main>
 			<article>
 				<div class="hero-image">
-					{heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
+					{
+						heroImage && (
+							<img
+								class:list={[{ 'diagram-hero': isDiagramHero }]}
+								width={1020}
+								height={510}
+								src={heroImage}
+								alt=""
+							/>
+						)
+					}
 				</div>
 				<div class="prose">
 					<div class="title">
@@ -83,5 +112,17 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			</article>
 		</main>
 		<Footer />
+		<script is:inline>
+			document.querySelectorAll(".prose a[href]").forEach((link) => {
+				const href = link.getAttribute("href") || "";
+				if (!href.startsWith("http://") && !href.startsWith("https://")) return;
+
+				link.setAttribute("target", "_blank");
+				const rel = new Set((link.getAttribute("rel") || "").split(/\s+/).filter(Boolean));
+				rel.add("noopener");
+				rel.add("noreferrer");
+				link.setAttribute("rel", Array.from(rel).join(" "));
+			});
+		</script>
 	</body>
 </html>

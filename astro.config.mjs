@@ -9,6 +9,11 @@ import cloudflare from "@astrojs/cloudflare";
 export default defineConfig({
 	site: "https://staycurio.io",
 	integrations: [mdx(), sitemap()],
+	markdown: {
+		shikiConfig: {
+			theme: "github-light",
+		},
+	},
 	adapter: cloudflare({
 		platformProxy: {
 			enabled: true,

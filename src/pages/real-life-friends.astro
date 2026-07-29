@@ -4,6 +4,11 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
 import { galleryGroups, galleryItems } from '../data/realLifeFriendsGallery';
+
+const galleryPreviewItems = galleryGroups[0].images.slice(0, 9).map(([src, caption]) => ({
+	src,
+	caption,
+}));
 ---
 
 <!doctype html>
@@ -19,6 +24,67 @@ import { galleryGroups, galleryItems } from '../data/realLifeFriendsGallery';
 
 			.gallery-intro {
 				max-width: 48rem;
+			}
+
+			.gallery-preview {
+				float: left;
+				width: min(18rem, 42vw);
+				margin: 0.35rem 1.5rem 1rem 0;
+			}
+
+			.gallery-preview a {
+				display: block;
+				color: inherit;
+				text-decoration: none;
+			}
+
+			.gallery-preview-grid {
+				display: grid;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: 0.3rem;
+				padding: 0.45rem;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				background: #e9eef6;
+				box-shadow: var(--box-shadow);
+				transition: transform 160ms ease, box-shadow 160ms ease;
+			}
+
+			.gallery-preview a:hover .gallery-preview-grid,
+			.gallery-preview a:focus-visible .gallery-preview-grid {
+				transform: translateY(-2px);
+				box-shadow: 0 12px 28px rgba(var(--gray), 0.22);
+			}
+
+			.gallery-preview-item {
+				overflow: hidden;
+				border: 1px solid rgba(var(--gray), 0.14);
+				border-radius: 5px;
+				background: white;
+			}
+
+			.gallery-preview-item img {
+				display: block;
+				width: 100%;
+				aspect-ratio: 16 / 9;
+				object-fit: cover;
+				object-position: top left;
+				border-radius: 0;
+				background: rgb(var(--gray-light));
+			}
+
+			.gallery-preview-label {
+				display: block;
+				grid-column: 1 / -1;
+				padding: 0.25rem 0.1rem 0;
+				font-size: 0.85rem;
+				font-weight: 700;
+				line-height: 1.2;
+				color: rgb(var(--gray-dark));
+			}
+
+			.gallery-preview-clear {
+				clear: both;
 			}
 
 			.gallery-group {
@@ -77,6 +143,21 @@ import { galleryGroups, galleryItems } from '../data/realLifeFriendsGallery';
 			}
 
 			@media (max-width: 640px) {
+				.gallery-preview {
+					float: none;
+					width: 100%;
+					max-width: 22rem;
+					margin: 1rem 0 1.5rem;
+				}
+
+				.gallery-preview-grid {
+					grid-template-columns: repeat(3, minmax(0, 1fr));
+				}
+
+				.gallery-preview-item:nth-child(n + 7) {
+					display: none;
+				}
+
 				.gallery-grid {
 					display: flex;
 					overflow-x: auto;
@@ -108,6 +189,18 @@ import { galleryGroups, galleryItems } from '../data/realLifeFriendsGallery';
 			</p>
 
 			<h2>How It Works</h2>
+			<aside class="gallery-preview" aria-label="Product gallery preview">
+				<a href="#product-gallery-heading" aria-label="View the full Real Life Friends product gallery">
+					<div class="gallery-preview-grid">
+						{galleryPreviewItems.map((item) => (
+							<div class="gallery-preview-item">
+								<img src={item.src} alt={`Real Life Friends screenshot: ${item.caption}`} loading="eager" decoding="async" />
+							</div>
+						))}
+						<span class="gallery-preview-label">Gallery</span>
+					</div>
+				</a>
+			</aside>
 			<p>
 				We match you with one person at a time based on what actually matters: where you are in life, 
 				what you're looking for, and why you'd genuinely enjoy meeting each other.
@@ -116,6 +209,7 @@ import { galleryGroups, galleryItems } from '../data/realLifeFriendsGallery';
 				No swiping. No algorithms optimizing for engagement. Just thoughtful introductions between 
 				people who have a real reason to connect.
 			</p>
+			<div class="gallery-preview-clear"></div>
 
 			<h2>What Makes Us Different</h2>
 			<ul>

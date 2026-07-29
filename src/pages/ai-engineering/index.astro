@@ -34,12 +34,20 @@ const posts = (await getCollection('blog')).sort(
 				text-decoration: none;
 				transition: 0.2s ease;
 			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-				width: 100%;
-				height: auto;
-			}
+				ul li img {
+					margin-bottom: 0.5rem;
+					border-radius: 12px;
+					width: 100%;
+					aspect-ratio: 4 / 3;
+					height: auto;
+					object-fit: cover;
+					background: #f7f8fa;
+				}
+				ul li img.diagram-teaser {
+					box-sizing: border-box;
+					padding: 0.45rem;
+					object-fit: contain;
+				}
 			ul li a {
 				display: block;
 			}
@@ -78,8 +86,20 @@ const posts = (await getCollection('blog')).sort(
 					{
 						posts.map((post) => (
 							<li>
-								<a href={`/ai-engineering/${post.id}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
+									<a href={`/ai-engineering/${post.id}/`}>
+										<img
+											class:list={[
+												{
+													'diagram-teaser':
+														post.data.heroImage?.endsWith('.svg') ||
+														post.data.heroImage?.includes('dynamo-spark-architecture'),
+												},
+											]}
+											width={720}
+											height={540}
+											src={post.data.heroImage}
+											alt=""
+										/>
 									<h4 class="title">{post.data.title}</h4>
 									<p class="date">
 										<FormattedDate date={post.data.pubDate} />
