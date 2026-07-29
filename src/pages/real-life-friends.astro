@@ -27,9 +27,8 @@ const galleryPreviewItems = galleryGroups[0].images.slice(0, 9).map(([src, capti
 			}
 
 			.gallery-preview {
-				float: left;
 				width: min(18rem, 42vw);
-				margin: 0.35rem 1.5rem 1rem 0;
+				margin: 1.25rem auto 1.75rem;
 			}
 
 			.gallery-preview a {
@@ -81,10 +80,6 @@ const galleryPreviewItems = galleryGroups[0].images.slice(0, 9).map(([src, capti
 				font-weight: 700;
 				line-height: 1.2;
 				color: rgb(var(--gray-dark));
-			}
-
-			.gallery-preview-clear {
-				clear: both;
 			}
 
 			.gallery-group {
@@ -144,7 +139,6 @@ const galleryPreviewItems = galleryGroups[0].images.slice(0, 9).map(([src, capti
 
 			@media (max-width: 640px) {
 				.gallery-preview {
-					float: none;
 					width: 100%;
 					max-width: 22rem;
 					margin: 1rem 0 1.5rem;
@@ -189,6 +183,14 @@ const galleryPreviewItems = galleryGroups[0].images.slice(0, 9).map(([src, capti
 			</p>
 
 			<h2>How It Works</h2>
+			<p>
+				We match you with one person at a time based on what actually matters: where you are in life, 
+				what you're looking for, and why you'd genuinely enjoy meeting each other.
+			</p>
+			<p>
+				No swiping. No algorithms optimizing for engagement. Just thoughtful introductions between 
+				people who have a real reason to connect.
+			</p>
 			<aside class="gallery-preview" aria-label="Product gallery preview">
 				<a href="#product-gallery-heading" aria-label="View the full Real Life Friends product gallery">
 					<div class="gallery-preview-grid">
@@ -201,15 +203,6 @@ const galleryPreviewItems = galleryGroups[0].images.slice(0, 9).map(([src, capti
 					</div>
 				</a>
 			</aside>
-			<p>
-				We match you with one person at a time based on what actually matters: where you are in life, 
-				what you're looking for, and why you'd genuinely enjoy meeting each other.
-			</p>
-			<p>
-				No swiping. No algorithms optimizing for engagement. Just thoughtful introductions between 
-				people who have a real reason to connect.
-			</p>
-			<div class="gallery-preview-clear"></div>
 
 			<h2>What Makes Us Different</h2>
 			<ul>
