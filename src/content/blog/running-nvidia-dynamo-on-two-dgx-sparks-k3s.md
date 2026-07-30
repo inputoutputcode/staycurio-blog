@@ -789,30 +789,65 @@ curl localhost:8000/v1/chat/completions -H 'Content-Type: application/json' -d '
   "max_tokens": 50}'
 ```
 
-A completion back proves the full pipeline: frontend > router > prefill on
-Spark A > KV-cache transfer over RDMA on the CX-7 > decode on Spark B >
-streamed response.
+A completion back proves the frontend, the router and the decode worker.
 
-For hard evidence that the cache really moved over RDMA, read the HCA
-counters around a request with a long, *unique* prompt (a repeated prompt is
-served from the prefix cache and transfers nothing, visible as
-`cached_tokens` in the response):
+Dynamo decides per request whether remote prefill is worth it. Short prompts
+and prompts with a high prefix-cache hit rate are handled by the decode worker
+alone, since there is little or nothing left to transfer. That is an
+optimisation, not a failure, and it makes a single small `curl` a poor test of
+the data path. The `usage` object in the response shows the second case as
+`cached_tokens`.
 
-These counters increment only for RoCE traffic, so TCP activity on the same
-interface does not affect them:
+To exercise the disaggregated path, send many concurrent requests with long,
+unique prompts:
 
 ```bash
-# before and after, on the prefill node (ships the KV blocks):
-cat /sys/class/infiniband/<device>/ports/1/counters/port_xmit_data   # 4-byte words
-# and on the decode node (receives them):
+cat > /tmp/load.sh <<'EOF'
+#!/usr/bin/env bash
+URL=${URL:-http://localhost:8000/v1/chat/completions}
+N=${1:-40}
+for i in $(seq 1 "$N"); do
+  P="req-$i-$(head -c 48 /dev/urandom | base64 | tr -d '\n=') $(python3 -c "print('filler tokens for a long prompt. ' * 900)")"
+  curl -s --max-time 300 "$URL" -H 'Content-Type: application/json' \
+    -d "{\"model\":\"Qwen/Qwen3-0.6B\",\"messages\":[{\"role\":\"user\",\"content\":\"$P\"}],\"max_tokens\":128}" \
+    -o /dev/null &
+  sleep 0.1
+done
+wait
+echo "done: $N requests"
+EOF
+chmod +x /tmp/load.sh
+```
+
+Each prompt is roughly 5,400 tokens and carries a random prefix, so the prefix
+cache cannot short-circuit it, and 40 in flight keep the decode worker busy
+enough that offloading prefill is the cheaper choice. For repeatable load with
+proper metrics, rather than a shell loop, use
+[AIPerf](https://github.com/ai-dynamo/aiperf).
+
+Now the hard evidence. These counters increment only for RoCE traffic, so TCP
+activity on the same interface does not affect them:
+
+```bash
+# on the prefill node (ships the KV blocks):
+C=/sys/class/infiniband/<device>/ports/1/counters
+cat $C/port_xmit_data        # 4-byte words, note the value
+
+/tmp/load.sh 40
+
+cat $C/port_xmit_data        # must have jumped by gigabytes
+
+# on the decode node (receives them), before and after the same run:
 cat /sys/class/infiniband/<device>/ports/1/counters/port_rcv_data
 ```
 
 `<device>` is the RDMA device from `ibdev2netdev` in 5.4, `rocep1s0f1` on
-these machines. Both must jump, and the byte counts should be in the same ballpark as the KV
-cache the request produced.
+these machines. Both counters must jump, and the byte counts should be in the
+same ballpark as the KV cache those requests produced. The prefill worker's
+log is the corroborating view: it prints `request received` per request it
+actually handles.
 
-Flat counters plus a successful response mean the transfer silently fell back,
+Flat counters plus successful responses mean the transfer silently fell back,
 so re-check the decode worker's `--kv-transfer-config` (5.3) and
 `UCX_NET_DEVICES`.
 
