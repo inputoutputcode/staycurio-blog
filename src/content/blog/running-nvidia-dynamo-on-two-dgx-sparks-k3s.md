@@ -41,9 +41,9 @@ By the end of this guide, you'll have:
 - [Part 3: GPU Operator](#part-3-gpu-operator)
 - [Part 4: Dynamo platform](#part-4-dynamo-platform)
 - [Part 5: Run the official disaggregated sample](#part-5-run-the-official-disaggregated-sample)
-  - [5.1 Clone the repo](#51-clone-the-repo-matching-tag)
+  - [5.1 Pre-pull the vLLM container image](#51-pre-pull-the-vllm-container-image)
   - [5.2 Create the token secret](#52-create-the-token-secret)
-  - [5.3 Adapt the sample for DGX Spark](#53-adapt-the-sample-for-dgx-spark)
+  - [5.3 Prepare Dynamo template for DGX Spark](#53-prepare-dynamo-template-for-dgx-spark)
   - [5.4 Configure RDMA for the KV transfer](#54-configure-rdma-for-the-kv-transfer)
   - [5.5 Deploy and watch it come up](#55-deploy-and-watch-it-come-up)
   - [5.6 Verify the disaggregated workload](#56-verify-the-disaggregated-workload)
@@ -192,15 +192,28 @@ the HCA. The default `RLIMIT_MEMLOCK` of 8 MB makes that fail with
 `securityContext` are not effective for a container running as a non-root
 user, which the Dynamo worker does. Kubernetes has no per-pod ulimit field, so
 raise it on the service that ultimately spawns the containers. Write the
-drop-in for both unit names now, before K3s is installed in Part 2, so the
-service picks it up on first start:
+drop-in now, before K3s is installed in Part 2, so the service picks it up on
+first start.
+
+On Spark A (K3s server):
 
 ```bash
-for UNIT in k3s k3s-agent; do
-  sudo mkdir -p "/etc/systemd/system/${UNIT}.service.d"
-  printf '[Service]\nLimitMEMLOCK=infinity\n' \
-    | sudo tee "/etc/systemd/system/${UNIT}.service.d/memlock.conf" >/dev/null
-done
+sudo mkdir -p /etc/systemd/system/k3s.service.d
+sudo tee /etc/systemd/system/k3s.service.d/memlock.conf <<'EOF'
+[Service]
+LimitMEMLOCK=infinity
+EOF
+sudo systemctl daemon-reload
+```
+
+On Spark B (K3s agent):
+
+```bash
+sudo mkdir -p /etc/systemd/system/k3s-agent.service.d
+sudo tee /etc/systemd/system/k3s-agent.service.d/memlock.conf <<'EOF'
+[Service]
+LimitMEMLOCK=infinity
+EOF
 sudo systemctl daemon-reload
 ```
 
@@ -266,6 +279,7 @@ disable:
 node-ip: 192.168.177.11
 advertise-address: 192.168.177.11
 flannel-iface: enp1s0f1np1
+flannel-backend: host-gw
 tls-san:
   - 192.168.177.11
 write-kubeconfig-mode: "0644"
@@ -274,10 +288,20 @@ EOF
 curl -sfL https://get.k3s.io | sh -s - server
 ```
 
-Two lines deserve emphasis. `node-ip` pins the control plane to the CX-7,
+Three settings deserve emphasis. `node-ip` pins the control plane to the CX-7,
 and `flannel-iface` pins the pod network: flannel otherwise follows the
-*default route*. Without this flag your pod-to-pod traffic silently rides
-the slow internet NIC while everything appears to work.
+*default route*, so pod-to-pod traffic silently rides the slow internet NIC
+while everything appears to work.
+
+`flannel-backend: host-gw` replaces the default VXLAN tunnel with plain kernel
+routes. Two nodes on a direct cable are layer-2 adjacent, so the tunnel buys
+nothing, and it costs something specific here: the VXLAN backend creates a
+`flannel.1` interface stacked on the CX-7, and every stacked interface with an
+IP registers additional RoCE GID entries on the same RDMA device. UCX then has
+several candidate GIDs, picks one from the pod network, and the NIXL handshake
+fails with `IP addresses do not match` or `not routable`. With host-gw there is
+no `flannel.1`, each RDMA device carries only its own address, and GID
+selection is unambiguous on both nodes.
 
 Grab the join token:
 
@@ -298,6 +322,10 @@ curl -sfL https://get.k3s.io | \
   K3S_URL=https://192.168.177.11:6443 K3S_TOKEN=<token> sh -s - agent
 ```
 
+`flannel-backend` is not repeated here: it is a server-scope setting, and the
+agent receives the backend configuration from the server. `flannel-iface` is
+per-node and does belong in both files.
+
 ### 2.3 Verify
 
 All `kubectl` commands run on the **server** (the agent has no kubeconfig):
@@ -308,6 +336,15 @@ kubectl get nodes -o wide
 
 kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}: {.metadata.annotations.flannel\.alpha\.coreos\.com/public-ip}{"\n"}{end}'
 # Both must print their 192.168.177.x address, confirming flannel-iface took
+```
+
+On each node, confirm host-gw is in effect: no tunnel device, and the other
+node's pod subnet routed directly over the CX-7.
+
+```bash
+ip -br link | grep flannel      # no flannel.1
+ip route | grep 10.42           # 10.42.x.0/24 via 192.168.177.y dev enp1s0f1np1
+show_gids | grep 192.168.177    # only this address on the RDMA device
 ```
 
 ---
@@ -423,17 +460,10 @@ expected to beat one aggregated worker on it. The goal in this part is
 architectural validation: prove the pipeline and the RDMA transfer work.
 Performance comparisons come later, with a model worth disaggregating.
 
-### 5.1 Clone the repo (matching tag)
-
-```bash
-git clone --depth 1 --branch v${DYNAMO_VERSION} https://github.com/ai-dynamo/dynamo
-cd dynamo/examples/backends/vllm/deploy
-```
+### 5.1 Pre-pull the vLLM container image
 
 Pre-pull the runtime image (about 13 GB) on **both** nodes, so the first
-deployment skips its longest step. `k3s ctr` talks to the same embedded
-containerd the kubelet uses, so anything pulled this way is a cache hit at
-deploy time:
+deployment skips its longest step.
 
 ```bash
 sudo k3s ctr images pull nvcr.io/nvidia/ai-dynamo/vllm-runtime:${DYNAMO_VERSION}
@@ -450,7 +480,14 @@ kubectl create secret generic hf-token-secret \
 Careful with the secret: `envFromSecret` in the deployment YAML takes the
 secret's **name** (`hf-token-secret`), never the token itself.
 
-### 5.3 Adapt the sample for DGX Spark
+### 5.3 Prepare Dynamo template for DGX Spark
+
+Clone the repository at the tag matching your platform version:
+
+```bash
+git clone --depth 1 --branch v${DYNAMO_VERSION} https://github.com/ai-dynamo/dynamo
+cd dynamo/examples/backends/vllm/deploy
+```
 
 The official sample is `disagg.yaml`, a Frontend plus two workers
 (`VllmDecodeWorker` and `VllmPrefillWorker`). The stock file references the
@@ -752,8 +789,8 @@ curl localhost:8000/v1/chat/completions -H 'Content-Type: application/json' -d '
   "max_tokens": 50}'
 ```
 
-A completion back proves the full pipeline: frontend → router → prefill on
-Spark A → KV-cache transfer over RDMA on the CX-7 → decode on Spark B →
+A completion back proves the full pipeline: frontend > router > prefill on
+Spark A > KV-cache transfer over RDMA on the CX-7 > decode on Spark B >
 streamed response.
 
 For hard evidence that the cache really moved over RDMA, read the HCA
