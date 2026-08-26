@@ -65,6 +65,14 @@ const isDiagramHero =
 			:global(.prose h3) {
 				font-size: 1.28em;
 			}
+			:global(.prose a.image-link) {
+				display: block;
+				cursor: zoom-in;
+				line-height: 0;
+			}
+			:global(.prose a.image-link:hover img) {
+				box-shadow: 0 0 0 3px rgba(var(--accent), 0.18);
+			}
 			.date {
 				margin-bottom: 0.5em;
 				color: rgb(var(--gray));
@@ -113,6 +121,24 @@ const isDiagramHero =
 		</main>
 		<Footer />
 		<script is:inline>
+			document.querySelectorAll(".prose img").forEach((image) => {
+				if (image.closest("a")) return;
+
+				const src = image.getAttribute("src");
+				if (!src) return;
+
+				const link = document.createElement("a");
+				link.href = src;
+				link.className = "image-link";
+				link.target = "_blank";
+				link.rel = "noopener noreferrer";
+				link.setAttribute("aria-label", image.alt ? "Open full-size image: " + image.alt : "Open full-size image");
+				link.title = "Open full-size image";
+
+				image.parentNode.insertBefore(link, image);
+				link.appendChild(image);
+			});
+
 			document.querySelectorAll(".prose a[href]").forEach((link) => {
 				const href = link.getAttribute("href") || "";
 				if (!href.startsWith("http://") && !href.startsWith("https://")) return;
