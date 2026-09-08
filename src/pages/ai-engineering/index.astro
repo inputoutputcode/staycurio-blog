@@ -93,7 +93,8 @@ const posts = (await getCollection('blog')).sort(
 													'diagram-teaser':
 														post.data.heroImage?.endsWith('.svg') ||
 														post.data.heroImage?.includes('dynamo-spark-architecture') ||
-														post.data.heroImage?.includes('dual-spark-kv-path'),
+														post.data.heroImage?.includes('dual-spark-kv-path') ||
+														post.data.heroImage?.includes('sparky-mlops-flow'),
 												},
 											]}
 											width={720}
